@@ -69,7 +69,8 @@ pick(Name, CallType) ->
                 {ok, {Pid, interceptor(Name, CallType)}}
         end
     catch
-        error:badarg ->
+        error:Error ->
+            ?LOG_INFO(#{what => debug_channel, error => Error}),
             {error, undefined_channel}
     end.
 
