@@ -61,7 +61,7 @@ is_ready(Name) ->
 -spec pick(name(), unary | stream) -> {ok, {pid(), grpcbox_client:interceptor() | undefined}} |
                                    {error, undefined_channel | no_endpoints}.
 pick(Name, CallType) ->
-    ?LOG_INFO(#{what => debug_channel, name => Name, call_type => CallType}),
+    ?LOG_INFO(#{what => debug_channel_pick, name => Name, call_type => CallType}),
     try
         case gproc_pool:pick_worker(Name) of
             false -> {error, no_endpoints};
@@ -89,6 +89,7 @@ stop(Name, Reason) ->
     gen_statem:stop(?CHANNEL(Name), Reason, infinity).
 
 init([Name, Endpoints, Options]) ->
+    ?LOG_INFO(#{what => debug_channel_init}),
     process_flag(trap_exit, true),
 
     Endpoints1 = normalize_endpoints(Endpoints),
@@ -99,7 +100,7 @@ init([Name, Endpoints, Options]) ->
 
     insert_interceptors(Name, Options),
 
-    ?LOG_INFO(#{what => debug_grpcbox_channel_init, name => Name, endpoints => Endpoints, options => Options}),
+    ?LOG_INFO(#{what => debug_channel_init, name => Name, endpoints => Endpoints, options => Options}),
     gproc_pool:new(Name, BalancerType, [{size, length(Endpoints)},
                                         {auto_size, true}]),
     Data = #data{
@@ -177,7 +178,7 @@ insert_stream_interceptor(Name, _Type, Interceptors) ->
     end.
 
 start_workers(Pool, StatsHandler, Encoding, Endpoints) ->
-    ?LOG_INFO(#{what => debug_grpcbox_channel_start_workers, pool => Pool, endpoints => Endpoints}),
+    ?LOG_INFO(#{what => debug_channel_start_workers, pool => Pool, endpoints => Endpoints}),
     [begin
          gproc_pool:add_worker(Pool, Endpoint),
          {ok, Pid} = grpcbox_subchannel:start_link(Endpoint, Pool, {Transport, Host, Port, SSLOptions, ConnectionSettings},
