@@ -99,6 +99,7 @@ init([Name, Endpoints, Options]) ->
 
     insert_interceptors(Name, Options),
 
+    ?LOG_INFO(#{what => debug_grpcbox_channel_init, name => Name, endpoints => Endpoints, options => Options}),
     gproc_pool:new(Name, BalancerType, [{size, length(Endpoints)},
                                         {auto_size, true}]),
     Data = #data{
@@ -176,6 +177,7 @@ insert_stream_interceptor(Name, _Type, Interceptors) ->
     end.
 
 start_workers(Pool, StatsHandler, Encoding, Endpoints) ->
+    ?LOG_INFO(#{what => debug_grpcbox_channel_start_workers, pool => Pool, endpoints => Endpoints}),
     [begin
          gproc_pool:add_worker(Pool, Endpoint),
          {ok, Pid} = grpcbox_subchannel:start_link(Endpoint, Pool, {Transport, Host, Port, SSLOptions, ConnectionSettings},
