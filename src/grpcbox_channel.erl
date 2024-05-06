@@ -14,6 +14,7 @@
          idle/3]).
 
 -include("grpcbox.hrl").
+-include_lib("kernel/include/logger.hrl").
 
 -define(CHANNEL(Name), {via, gproc, {n, l, {?MODULE, Name}}}).
 
@@ -60,6 +61,7 @@ is_ready(Name) ->
 -spec pick(name(), unary | stream) -> {ok, {pid(), grpcbox_client:interceptor() | undefined}} |
                                    {error, undefined_channel | no_endpoints}.
 pick(Name, CallType) ->
+    ?LOG_INFO(#{what => debug_channel, name => Name, call_type => CallType}),
     try
         case gproc_pool:pick_worker(Name) of
             false -> {error, no_endpoints};
