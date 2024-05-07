@@ -22,6 +22,7 @@
          close_send/1]).
 
 -include_lib("chatterbox/include/http2.hrl").
+-include_lib("kernel/include/logger.hrl").
 -include("grpcbox.hrl").
 
 -type options() :: #{channel => grpcbox_channel:t(),
