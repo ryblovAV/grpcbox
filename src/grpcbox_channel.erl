@@ -100,7 +100,6 @@ init([Name, Endpoints, Options]) ->
 
     insert_interceptors(Name, Options),
 
-    ?LOG_INFO(#{what => debug_channel_init, name => Name, endpoints => Endpoints, options => Options}),
     gproc_pool:new(Name, BalancerType, [{size, length(Endpoints)},
                                         {auto_size, true}]),
     Data = #data{

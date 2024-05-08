@@ -63,8 +63,10 @@ unary(Ctx, Path, Input, Def, Options) ->
 
             case Interceptor of
                 undefined ->
+                    ?LOG_INFO(#{what => debug_grpcbox_unary_1, input => Input}),
                     Handler(Ctx, Input);
                 _ ->
+                    ?LOG_INFO(#{what => debug_grpcbox_unary_2, input => Input, path => Path, channel => Channel, options => Options}),
                     Interceptor(Ctx, Channel, Handler, Path, Input, Def, Options)
             end;
         {error, _Reason}=Error ->
