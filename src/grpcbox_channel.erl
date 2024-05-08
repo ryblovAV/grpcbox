@@ -91,7 +91,7 @@ stop(Name, Reason) ->
     gen_statem:stop(?CHANNEL(Name), Reason, infinity).
 
 init([Name, Endpoints, Options]) ->
-    ?LOG_INFO(#{what => debug_channel_init}),
+    ?LOG_INFO(#{what => debug_channel_init, name => Name, endpoints => Endpoints, options => Options}),
     process_flag(trap_exit, true),
 
     Endpoints1 = normalize_endpoints(Endpoints),
