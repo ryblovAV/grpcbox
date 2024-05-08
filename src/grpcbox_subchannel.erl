@@ -28,6 +28,7 @@
                idle_interval :: timer:time()}).
 
 start_link(Name, Channel, Endpoint, Encoding, StatsHandler) ->
+    ?LOG_INFO(#{what => debug_grpcbox_subchannel_start_link, channel => Channel, endpoint => Endpoint, name => Name}),
     gen_statem:start_link(?MODULE, [Name, Channel, Endpoint, Encoding, StatsHandler], []).
 
 conn(Pid) ->
