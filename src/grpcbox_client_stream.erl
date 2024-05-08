@@ -12,6 +12,7 @@
          handle_info/2]).
 
 -include("grpcbox.hrl").
+-include_lib("kernel/include/logger.hrl").
 
 new_stream(Ctx, Channel, Path, Def=#grpcbox_def{service=Service,
                                                 message_type=MessageType,
