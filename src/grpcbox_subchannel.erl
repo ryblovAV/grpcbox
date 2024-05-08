@@ -90,8 +90,10 @@ callback_mode() ->
 
 ready({call, From}, conn, #data{conn=Conn,
                                 info=Info}) ->
+    ?LOG_INFO(#{what => debug_grpcbox_subchannels_ready_1}),                                
     {keep_state_and_data, [{reply, From, {ok, Conn, Info}}]};
 ready(EventType, EventContent, Data) ->
+    ?LOG_INFO(#{what => debug_grpcbox_subchannels_ready_2}),                                
     handle_event(EventType, EventContent, Data).
 
 disconnected({call, From}, conn, Data) ->
@@ -138,6 +140,7 @@ terminate(Reason, _State, #data{conn_pid=Pid,
 
 connect(Data=#data{conn=undefined,
                    endpoint={Transport, Host, Port, SSLOptions, ConnectionSettings}}, From, Actions) ->
+    ?LOG_INFO(#{what => debug_grpcbox_subchannels_connect_1}),
     case h2_client:start_link(Transport, Host, Port, options(Transport, SSLOptions),
                               ConnectionSettings#{garbage_on_end => true,
                                                   stream_callback_mod => grpcbox_client_stream}) of
@@ -148,6 +151,7 @@ connect(Data=#data{conn=undefined,
             {next_state, disconnected, Data#data{conn=undefined}, [{reply, From, Error}]}
     end;
 connect(Data=#data{conn=Conn, conn_pid=Pid}, From, Actions) when is_pid(Pid) ->
+    ?LOG_INFO(#{what => debug_grpcbox_subchannels_connect_2}),
     h2_connection:stop(Conn),
     connect(Data#data{conn=undefined, conn_pid=undefined}, From, Actions).
 
