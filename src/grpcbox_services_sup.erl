@@ -14,6 +14,7 @@
 -export([init/1]).
 
 -include("grpcbox.hrl").
+-include_lib("kernel/include/logger.hrl").
 
 start_link(ServerOpts, GrpcOpts, ListenOpts, PoolOpts, TransportOpts) ->
     %% give the services_sup a name because in the future we might want to reference it easily for
@@ -66,6 +67,7 @@ pool_name(ListenOpts) ->
     name("grpcbox_pool", ListenOpts).
 
 name(Prefix, ListenOpts) ->
+    ?LOG_INFO(#{what => debug_grpcbox_service_sup, prefix => Prefix, lister_options => ListenOpts}),
     Port = maps:get(port, ListenOpts, 8080),
     IPAddress = maps:get(ip, ListenOpts, {0, 0, 0, 0}),
     list_to_atom(Prefix ++ "_" ++ inet_parse:ntoa(IPAddress) ++ "_" ++ integer_to_list(Port)).
