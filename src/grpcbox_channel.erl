@@ -51,6 +51,8 @@
 
 -spec start_link(name(), [endpoint()], options()) -> {ok, pid()} | ignore | {error, term()}.
 start_link(Name, Endpoints, Options) ->
+    Stacktrace = element(2, erlang:process_info(self(), current_stacktrace)),
+    ?LOG_INFO(#{what => debug_grpcbox_channel_start_link, name => Name, endpoints => Endpoints, options => Options, stacktrace => Stacktrace}),
     gen_statem:start_link(?CHANNEL(Name), ?MODULE, [Name, Endpoints, Options], []).
 
 -spec is_ready(name()) -> boolean().
