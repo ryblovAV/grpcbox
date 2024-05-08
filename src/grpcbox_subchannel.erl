@@ -2,6 +2,8 @@
 
 -behaviour(gen_statem).
 
+-include_lib("kernel/include/logger.hrl").
+
 -export([start_link/5,
          conn/1,
          conn/2,
@@ -31,10 +33,14 @@ start_link(Name, Channel, Endpoint, Encoding, StatsHandler) ->
 conn(Pid) ->
     conn(Pid, infinity).
 conn(Pid, Timeout) ->
+    ?LOG_INFO(#{what => debug_grpcbox_subchannels_conn, pid => Pid}),
     try
         gen_statem:call(Pid, conn, Timeout)
     catch
-        exit:{timeout, _} -> {error, timeout}
+        E:R:S ->
+            ?LOG_INFO(#{what => debug_grpcbox_subchannels_conn_err, reason => R, stacktrace => S, err => E}),
+            {error, timeout}
+        % exit:{timeout, _} -> {error, timeout}
     end.
 
 stop(Pid, Reason) ->
