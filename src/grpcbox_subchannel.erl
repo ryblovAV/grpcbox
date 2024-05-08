@@ -144,8 +144,7 @@ connect(Data=#data{conn=undefined,
                    endpoint={Transport, Host, Port, SSLOptions, ConnectionSettings}}, From, Actions) ->
     Stacktrace = element(2, erlang:process_info(self(), current_stacktrace)),
     ?LOG_INFO(#{what => debug_grpcbox_subchannels_connect_1, transport => Transport, host => Host, port => Port, ssl_options => SSLOptions, conn_settings => ConnectionSettings, actions => Actions, stacktrace => Stacktrace}),
-    Port2 = 50051,
-    case h2_client:start_link(Transport, Host, Port2, options(Transport, SSLOptions),
+    case h2_client:start_link(Transport, Host, Port, options(Transport, SSLOptions),
                               ConnectionSettings#{garbage_on_end => true,
                                                   stream_callback_mod => grpcbox_client_stream}) of
         {ok, Conn} ->
