@@ -37,10 +37,7 @@ conn(Pid, Timeout) ->
     try
         gen_statem:call(Pid, conn, Timeout)
     catch
-        E:R:S ->
-            ?LOG_INFO(#{what => debug_grpcbox_subchannels_conn_err, reason => R, stacktrace => S, err => E}),
-            {error, timeout}
-        % exit:{timeout, _} -> {error, timeout}
+        exit:{timeout, _} -> {error, timeout}
     end.
 
 stop(Pid, Reason) ->
@@ -103,14 +100,19 @@ disconnected(EventType, EventContent, Data) ->
     handle_event(EventType, EventContent, Data).
 
 handle_event({call, From}, info, #data{info=Info}) ->
+    ?LOG_INFO(#{what => debug_grpcbox_subchannels_handle_event_1}),
     {keep_state_and_data, [{reply, From, Info}]};
 handle_event(info, {'EXIT', Pid, _}, Data=#data{conn_pid=Pid}) ->
+    ?LOG_INFO(#{what => debug_grpcbox_subchannels_handle_event_2}),
     {next_state, disconnected, Data#data{conn=undefined, conn_pid=undefined}};
 handle_event(info, {'EXIT', _, econnrefused}, #data{conn=undefined, conn_pid=undefined}) ->
+    ?LOG_INFO(#{what => debug_grpcbox_subchannels_handle_event_3}),
     keep_state_and_data;
 handle_event({call, From}, shutdown, _) ->
+    ?LOG_INFO(#{what => debug_grpcbox_subchannels_handle_event_4}),
     {stop_and_reply, normal, {reply, From, ok}};
 handle_event(_, _, _) ->
+    ?LOG_INFO(#{what => debug_grpcbox_subchannels_handle_event_5}),
     keep_state_and_data.
 
 terminate(_Reason, _State, #data{conn=undefined,
