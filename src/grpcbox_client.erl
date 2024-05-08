@@ -114,6 +114,7 @@ unary_handler(Ctx, Channel, Path, Input, Def, Options) ->
                         Error
                 end;
             {error, {shutdown, econnrefused}} ->
+                ?LOG_INFO(#{what => debug_grpcbox_unary_handler, channel => Channel, path => Path, input => Input, def => Def, options => Options}),
                 {error, econnrefused};
             {error, _}=Error ->
                 Error

@@ -52,6 +52,7 @@ send_request(Ctx, Channel, Path, Input, #grpcbox_def{service=Service,
                                                      message_type=MessageType,
                                                      marshal_fun=MarshalFun,
                                                      unmarshal_fun=UnMarshalFun}, Options) ->
+    ?LOG_INFO(#{what => debug_grpcbox_send_request, service => Service, path => Path, channel => Channel}),                                                        
     case grpcbox_subchannel:conn(Channel, grpcbox_utils:get_timeout_from_ctx(Ctx, infinity)) of
         {ok, Conn, #{scheme := Scheme,
                      authority := Authority,
@@ -78,7 +79,8 @@ send_request(Ctx, Channel, Path, Input, #grpcbox_def{service=Service,
                 {StreamId, Pid} ->
                     {ok, Conn, StreamId, Pid}
             end;
-        {error, _}=Error ->
+        {error, R}=Error ->
+            ?LOG_INFO(#{what => debug_grpcbox_send_request_error, reason => R, service => Service, path => Path, channel => Channel}),
             Error
     end.
 
