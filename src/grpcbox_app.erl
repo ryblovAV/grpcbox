@@ -10,6 +10,7 @@
 -export([start/2, stop/1]).
 
 -include("grpcbox.hrl").
+-include_lib("kernel/include/logger.hrl").
 
 start(_StartType, _StartArgs) ->
     {ok, Pid} = grpcbox_sup:start_link(),
