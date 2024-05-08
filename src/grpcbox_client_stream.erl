@@ -62,7 +62,7 @@ send_request(Ctx, Channel, Path, Input, #grpcbox_def{service=Service,
             Encoding = maps:get(encoding, Options, DefaultEncoding),
             Body = grpcbox_frame:encode(Encoding, MarshalFun(Input)),
             Headers = headers(Scheme, Authority, Path, encoding_to_binary(Encoding), MessageType, metadata_headers(Ctx)),
-
+            ?LOG_INFO(#{what => debug_grpcbox_send_request, headers => Headers}),
             %% headers are sent in the same request as creating a new stream to ensure
             %% concurrent calls can't end up interleaving the sending of headers in such
             %% a way that a lower stream id's headers are sent after another's, which results
