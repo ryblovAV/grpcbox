@@ -48,7 +48,7 @@
 
 get_channel(Options, Type) ->
     Channel = maps:get(channel, Options, default_channel),
-    ?LOG_INFO(#{what => debug_get_channel, options => Options, type => Type}),
+    ?LOG_INFO(#{what => debug_get_channel, options => Options, type => Type, channel => Channel}),
     grpcbox_channel:pick(Channel, Type).
 
 unary(Ctx, Service, Method, Input, Def, Options) ->

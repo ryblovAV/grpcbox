@@ -63,16 +63,18 @@ is_ready(Name) ->
 -spec pick(name(), unary | stream) -> {ok, {pid(), grpcbox_client:interceptor() | undefined}} |
                                    {error, undefined_channel | no_endpoints}.
 pick(Name, CallType) ->
-    ?LOG_INFO(#{what => debug_channel_pick, name => Name, call_type => CallType}),
+    ?LOG_INFO(#{what => debug_grpcbox_channel_pick, name => Name, call_type => CallType}),
     try
         case gproc_pool:pick_worker(Name) of
             false -> {error, no_endpoints};
             Pid when is_pid(Pid) ->
-                {ok, {Pid, interceptor(Name, CallType)}}
+                {ok, {Pid, interceptor(Name, CallType)}};
+            Err ->
+                ?LOG_INFO(#{what => debug_grpcbox_channel_pick_test, error => Err})
         end
     catch
         error:Error ->
-            ?LOG_INFO(#{what => debug_channel, error => Error}),
+            ?LOG_INFO(#{what => debug_grpcbox_channel_pick_error, error => Error}),
             {error, undefined_channel}
     end.
 
